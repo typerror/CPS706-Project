@@ -31,14 +31,12 @@ class CentralizedGraph:
     def minPathFindIterative(self, source):
         self.cost[source] = 0
 
-        for _ in range(self.nodes):
-            min = self.minCost()
-            self.visited[min] = True
+        minIndex = self.minCost()
+        self.visited[minIndex] = True
 
-            for j in range(self.nodes):
-                if self.edges[min][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[min] + self.edges[min][j]:
-                    self.cost[j] = self.cost[min] + self.edges[min][j]
-            break
+        for j in range(self.nodes):
+            if self.edges[minIndex][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]:
+                self.cost[j] = self.cost[minIndex] + self.edges[minIndex][j]
 
         self.printCost()
 
@@ -46,12 +44,13 @@ class CentralizedGraph:
         self.cost[source] = 0
 
         for _ in range(self.nodes):
-            min = self.minCost()
-            self.visited[min] = True
+            minIndex = self.minCost()
+            self.visited[minIndex] = True
 
             for j in range(self.nodes):
-                if self.edges[min][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[min] + self.edges[min][j]:
-                    self.cost[j] = self.cost[min] + self.edges[min][j]
+                if self.edges[minIndex][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]:
+                    self.cost[j] = self.cost[minIndex] + \
+                        self.edges[minIndex][j]
 
         self.printCost()
 
