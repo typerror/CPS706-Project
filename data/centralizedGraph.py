@@ -35,7 +35,11 @@ class CentralizedGraph:
         self.visited[minIndex] = True
 
         for j in range(self.nodes):
-            if self.edges[minIndex][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]:
+            if (
+                self.edges[minIndex][j] != 0
+                and self.visited[j] == False
+                and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]
+            ):
                 self.cost[j] = self.cost[minIndex] + self.edges[minIndex][j]
 
         self.printCost()
@@ -48,9 +52,12 @@ class CentralizedGraph:
             self.visited[minIndex] = True
 
             for j in range(self.nodes):
-                if self.edges[minIndex][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]:
-                    self.cost[j] = self.cost[minIndex] + \
-                        self.edges[minIndex][j]
+                if (
+                    self.edges[minIndex][j] != 0
+                    and self.visited[j] == False
+                    and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]
+                ):
+                    self.cost[j] = self.cost[minIndex] + self.edges[minIndex][j]
 
         self.printCost()
 

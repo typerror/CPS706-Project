@@ -1,4 +1,5 @@
-from centralizedGraph import CentralizedGraph
+from data.centralizedGraph import CentralizedGraph
+from data.decentralizedGraph import DecentralizedGraph
 
 graph = CentralizedGraph(5)
 graph.addEdge(0, 1, 10)
@@ -18,3 +19,9 @@ graph.printEdges()
 # graph.minPathFindIterative(0)
 # graph.minPathFindIterative(0)
 # graph.minPathFindIterative(0)
+
+graph2 = DecentralizedGraph(["A", "B", "C", "D"])
+graph2.add_edge("A", "B", 1)
+graph2.add_edge("B", "C", 2)
+graph2.add_edge("B", "D", 3)
+graph2.printCostFromNode("D")
