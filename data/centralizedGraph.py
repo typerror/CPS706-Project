@@ -5,6 +5,9 @@ class CentralizedGraph:
         self.cost = [9999999] * nodes
         self.visited = [False] * nodes
 
+    def getNumberOfNodes(self):
+        return self.nodes
+
     def addEdge(self, source, destination, cost):
         self.edges[source][destination] = cost
 
@@ -17,30 +20,27 @@ class CentralizedGraph:
     def getVisited(self, node):
         return self.visited[node]
 
-    def nextMinCost(self):
-        minIndex = 0
-        min = 9999999
+    def nextMinCostNode(self):
+        minCostIndex = 0
+        minCost = 9999999
 
         for i in range(self.nodes):
-            if self.cost[i] < min and self.visited[i] == False:
-                min = self.cost[i]
-                minIndex = i
+            if self.cost[i] < minCost and self.visited[i] == False:
+                minCost = self.cost[i]
+                minCostIndex = i
 
-        return minIndex
+        return minCostIndex
 
     def minPathFindIterative(self, source):
         self.cost[source] = 0
 
-        minIndex = self.nextMinCost()
-        self.visited[minIndex] = True
+        minCostIndex = self.nextMinCostNode()
+        self.visited[minCostIndex] = True
 
         for j in range(self.nodes):
-            if (
-                self.edges[minIndex][j] != 0
-                and self.visited[j] == False
-                and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]
-            ):
-                self.cost[j] = self.cost[minIndex] + self.edges[minIndex][j]
+            if self.edges[minCostIndex][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[minCostIndex] + self.edges[minCostIndex][j]:
+                self.cost[j] = self.cost[minCostIndex] + \
+                    self.edges[minCostIndex][j]
 
         self.printCost()
 
@@ -48,16 +48,13 @@ class CentralizedGraph:
         self.cost[source] = 0
 
         for _ in range(self.nodes):
-            minIndex = self.nextMinCost()
-            self.visited[minIndex] = True
+            minCostIndex = self.nextMinCostNode()
+            self.visited[minCostIndex] = True
 
             for j in range(self.nodes):
-                if (
-                    self.edges[minIndex][j] != 0
-                    and self.visited[j] == False
-                    and self.cost[j] > self.cost[minIndex] + self.edges[minIndex][j]
-                ):
-                    self.cost[j] = self.cost[minIndex] + self.edges[minIndex][j]
+                if self.edges[minCostIndex][j] != 0 and self.visited[j] == False and self.cost[j] > self.cost[minCostIndex] + self.edges[minCostIndex][j]:
+                    self.cost[j] = self.cost[minCostIndex] + \
+                        self.edges[minCostIndex][j]
 
         self.printCost()
 
