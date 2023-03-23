@@ -61,5 +61,5 @@ class CentralizedGraph:
 
     def printCost(self):
         for node in range(self.nodes):
-            print(node, "\t", self.cost[node])
+            print(node, " --- Cost:", self.cost[node])
         print()
