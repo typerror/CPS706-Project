@@ -17,7 +17,7 @@ class CentralizedGraph:
     def getVisited(self, node):
         return self.visited[node]
 
-    def minCost(self):
+    def nextMinCost(self):
         minIndex = 0
         min = 9999999
 
@@ -31,7 +31,7 @@ class CentralizedGraph:
     def minPathFindIterative(self, source):
         self.cost[source] = 0
 
-        minIndex = self.minCost()
+        minIndex = self.nextMinCost()
         self.visited[minIndex] = True
 
         for j in range(self.nodes):
@@ -44,7 +44,7 @@ class CentralizedGraph:
         self.cost[source] = 0
 
         for _ in range(self.nodes):
-            minIndex = self.minCost()
+            minIndex = self.nextMinCost()
             self.visited[minIndex] = True
 
             for j in range(self.nodes):
