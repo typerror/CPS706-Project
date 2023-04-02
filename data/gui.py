@@ -229,6 +229,8 @@ class algorithmWindow(QWidget):
 
         for i in range(self.graph.nodes):
             self.weightTable.setItem(0, i, QTableWidgetItem("inf"))
+        
+        self.weightTable.setItem(0, self.currentNode, QTableWidgetItem("0"))
 
         self.layout.addWidget(self.weightTable)
         self.weightTable.show()
