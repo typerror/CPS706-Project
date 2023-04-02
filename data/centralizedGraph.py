@@ -42,6 +42,7 @@ class CentralizedGraph:
         """
 
         self.edges[source][destination] = cost
+        self.edges[destination][source] = cost
 
     def getEdge(self, source, destination):
         """
