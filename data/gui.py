@@ -1,7 +1,7 @@
 import random
 import sys
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QWidget, QGraphicsEllipseItem, QGraphicsScene, QGraphicsView, QLineEdit, QGraphicsLineItem, QGraphicsTextItem
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QWidget, QGraphicsEllipseItem, QGraphicsScene, QGraphicsView, QLineEdit, QGraphicsLineItem, QGraphicsTextItem, QTableWidget, QTableWidgetItem
 from PyQt6.QtGui import QPen, QBrush, QIntValidator
 from PyQt6.QtCore import Qt
 
@@ -62,6 +62,9 @@ class algorithmWindow(QWidget):
         self.errorLabel.setGeometry(0, 0, 200, 30)
         self.errorLabel.move(10, 70)
 
+        self.weightTable = QTableWidget(self)
+        self.weightTable.hide()
+
         if type == "centralized":
             self.setWindowTitle("Centralized Algorithm")
             self.label.setText("Dijikstra's Algorithm")
@@ -118,7 +121,7 @@ class algorithmWindow(QWidget):
         self.currentNode = 0
         self.previousNode = 0
         self.lines = [[None for _ in range(8)] for _ in range(8)]
-        self.currentEdge = None
+        self.previousEdge = None
 
     def generateGraph(self, numNodes):
         if (numNodes != "" and int(numNodes) >= 3):
@@ -129,6 +132,7 @@ class algorithmWindow(QWidget):
                 self.graph = DecentralizedGraph(int(numNodes))
             self.drawNodes(int(numNodes))
             self.drawEdges()
+            self.drawTable()
             self.errorLabel.setText("Choose from 3 to 8 Nodes")
             self.errorLabel.setStyleSheet("color: black")
         else:
@@ -183,6 +187,7 @@ class algorithmWindow(QWidget):
             drawLine.text = QGraphicsTextItem(str(weight), drawLine)
             drawLine.text.setPos(node1Pos[0] + (node2Pos[0] - node1Pos[0]) / 2,
                                  node1Pos[1] + (node2Pos[1] - node1Pos[1]) / 2)
+
             drawLine.setZValue(-1)
             self.lines[node1][node2] = drawLine
             self.lines[node2][node1] = drawLine
@@ -214,6 +219,19 @@ class algorithmWindow(QWidget):
             for j in range(self.graph.nodes):
                 if self.graph.getEdge(i, j) != 0:
                     self.drawEdge(i, j, self.graph.getEdge(i, j))
+
+    def drawTable(self):
+        self.weightTable.setFixedSize(825, 55)
+        self.weightTable.setRowCount(1)
+        self.weightTable.setColumnCount(self.graph.nodes)
+        self.weightTable.setHorizontalHeaderLabels(
+            [str(i) for i in range(self.graph.nodes)])
+
+        for i in range(self.graph.nodes):
+            self.weightTable.setItem(0, i, QTableWidgetItem("inf"))
+
+        self.layout.addWidget(self.weightTable)
+        self.weightTable.show()
 
     def setNodesAndEdgeColour(self):
         self.nodes[self.previousNode].setPen(
