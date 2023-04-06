@@ -20,7 +20,23 @@ class CentralizedGraph:
         self.nodes = nodes
         self.edges = [[0 for _ in range(nodes)] for _ in range(nodes)]
         self.cost = [9999999] * nodes
+        self.cost[0] = 0
         self.visited = [False] * nodes
+        self.currentNode = 0
+        self.nextNode = 0
+        self.finished = False
+
+    def reset(self):
+        """
+        Resets the graph to its initial state.
+        """
+
+        self.cost = [9999999] * self.nodes
+        self.cost[0] = 0
+        self.visited = [False] * self.nodes
+        self.currentNode = 0
+        self.nextNode = 0
+        self.finished = False
 
     def getNumberOfNodes(self):
         """
@@ -96,34 +112,44 @@ class CentralizedGraph:
 
         return minCostIndex
 
-    def minPathFindIterative(self, source):
+    def minPathFindIterative(self):
         """
         Finds the minimum path from the source node to all other nodes in the graph using dijkstras shortest path algorithm.
         *Performs the algorithm iteratively in order to show the intermediate steps*
-
-        :param int source: Source node.
         """
 
-        self.cost[source] = 0
+        if (self.nextNode == self.nodes - 1):
+            self.nextNode = 0
 
-        minCostIndex = self.nextMinCostNode()
-        self.visited[minCostIndex] = True
+        if self.nextNode == 0:
+            minCostIndex = self.nextMinCostNode()
+            self.visited[minCostIndex] = True
+            self.currentNode = minCostIndex
 
-        for j in range(self.nodes):
-            if self.edges[minCostIndex][j] != 0 and self.visited[j] == False and (self.cost[j] > self.cost[minCostIndex] + self.edges[minCostIndex][j]):
-                self.cost[j] = self.cost[minCostIndex] + \
-                    self.edges[minCostIndex][j]
+        temp = self.nextNode
 
-        self.printCost()
+        for j in range(temp, self.nodes, 1):
+            if self.edges[self.currentNode][j] != 0 and self.visited[j] == False and (self.cost[j] > self.cost[self.currentNode] + self.edges[self.currentNode][j]):
+                self.cost[j] = self.cost[self.currentNode] + \
+                    self.edges[self.currentNode][j]
+                self.nextNode = j
+                break
+            else:
+                self.nextNode = j
 
-    def minPathFind(self, source):
+        temp = 1
+        for i in self.visited:
+            if i == False:
+                temp = 0
+                break
+
+        if temp == 1:
+            self.finished = True
+
+    def minPathFind(self):
         """
         Finds the minimum path from the source node to all other nodes in the graph using dijkstras shortest path algorithm.
-
-        :param int source: Source node.
         """
-
-        self.cost[source] = 0
 
         for _ in range(self.nodes):
             minCostIndex = self.nextMinCostNode()
@@ -131,6 +157,7 @@ class CentralizedGraph:
 
             for j in range(self.nodes):
                 if self.edges[minCostIndex][j] != 0 and self.visited[j] == False and (self.cost[j] > self.cost[minCostIndex] + self.edges[minCostIndex][j]):
+                    print("Current Node: ", minCostIndex, "Next Node: ", j)
                     self.cost[j] = self.cost[minCostIndex] + \
                         self.edges[minCostIndex][j]
 
