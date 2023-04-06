@@ -50,10 +50,7 @@ class algorithmWindow(QWidget):
         self.graph = None
         self.nodes = []
         self.nodePos = []
-        self.currentNode = 0
-        self.previousNode = 0
         self.lines = [[None for _ in range(8)] for _ in range(8)]
-        self.previousEdge = None
 
         self.label = QLabel("", self)
         self.layout.addWidget(self.label)
@@ -107,10 +104,11 @@ class algorithmWindow(QWidget):
         generateGraphButton.pressed.connect(
             lambda: self.generateGraph(inputBox.text()))
 
-        nexIterationButton = QPushButton("Next Iteration", self)
-        nexIterationButton.setGeometry(50, 50, 150, 40)
-        nexIterationButton.move(5, 150)
-        nexIterationButton.pressed.connect(self.nextIteration)
+        self.nextIterationButton = QPushButton("Next Iteration", self)
+        self.nextIterationButton.setEnabled(False)
+        self.nextIterationButton.setGeometry(50, 50, 150, 40)
+        self.nextIterationButton.move(5, 150)
+        self.nextIterationButton.pressed.connect(self.nextIteration)
 
         self.setLayout(self.layout)
 
@@ -119,9 +117,11 @@ class algorithmWindow(QWidget):
         self.nodes = []
         self.nodePos = []
         self.currentNode = 0
-        self.previousNode = 0
         self.lines = [[None for _ in range(8)] for _ in range(8)]
         self.previousEdge = None
+        self.nextIterationButton.setText("Next Iteration")
+        self.nextIterationButton.setEnabled(True)
+        self.nextIterationButton.setStyleSheet("color: black")
 
     def generateGraph(self, numNodes):
         if (numNodes != "" and int(numNodes) >= 3):
@@ -229,31 +229,33 @@ class algorithmWindow(QWidget):
 
         for i in range(self.graph.nodes):
             self.weightTable.setItem(0, i, QTableWidgetItem("inf"))
-        
+
         self.weightTable.setItem(0, self.currentNode, QTableWidgetItem("0"))
 
         self.layout.addWidget(self.weightTable)
         self.weightTable.show()
 
-    def setNodesAndEdgeColour(self):
-        self.nodes[self.previousNode].setPen(
-            QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
-        self.nodes[self.currentNode].setPen(
-            QPen(Qt.GlobalColor.green, 4, Qt.PenStyle.SolidLine))
-        self.lines[self.previousNode][self.currentNode].setPen(
-            QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
-
     def nextIteration(self):
-        pass
-        # self.nodes[self.previousNode].setPen(
-        #     QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
-        # self.previousEdge = self.lines[self.previousNode][self.currentNode]
-        # if (self.previousEdge != None):
-        #     self.previousEdge.setPen(
-        #         QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
-        # self.previousNode = self.currentNode
-        # self.currentNode = self.previousNode + 1
-        # self.setNodesAndEdgeColour()
+        self.nodes[self.graph.currentNode].setPen(
+            QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
+        if self.lines[self.graph.currentNode][self.graph.nextNode] != None:
+            self.lines[self.graph.currentNode][self.graph.nextNode].setPen(
+                QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
+
+        if self.graph.finished:
+            self.nextIterationButton.setEnabled(False)
+            self.nextIterationButton.setText("Finished")
+            self.nextIterationButton.setStyleSheet("color: green")
+
+        self.graph.minPathFindIterative()
+        self.weightTable.setItem(0, self.graph.nextNode, QTableWidgetItem(
+            str(self.graph.getCost(self.graph.nextNode))))
+
+        self.nodes[self.graph.currentNode].setPen(
+            QPen(Qt.GlobalColor.green, 4, Qt.PenStyle.SolidLine))
+        if self.lines[self.graph.currentNode][self.graph.nextNode] != None:
+            self.lines[self.graph.currentNode][self.graph.nextNode].setPen(
+                QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
 
     def homeWindow(self):
         w.show()
