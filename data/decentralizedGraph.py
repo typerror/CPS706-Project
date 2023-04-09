@@ -33,3 +33,18 @@ class DecentralizedGraph:
         # Prints the distances
         for i in range(self.vertices):
             print(f"Vertex {i}: distance from source = {dist[i]}")
+            
+ 
+if __name__ == "__main__":
+    g = DecentralizedGraph(5)
+    g.add_edge(0, 1, -1)
+    g.add_edge(0, 2, 4)
+    g.add_edge(1, 2, 3)
+    g.add_edge(1, 3, 2)
+    g.add_edge(1, 4, 2)
+    g.add_edge(3, 2, 5)
+    g.add_edge(3, 1, 1)
+    g.add_edge(4, 3, -3)
+
+    g.bellman_ford(0)
+
