@@ -2,7 +2,7 @@ import random
 import sys
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QWidget, QGraphicsEllipseItem, QGraphicsScene, QGraphicsView, QLineEdit, QGraphicsLineItem, QGraphicsTextItem, QTableWidget, QTableWidgetItem
-from PyQt6.QtGui import QPen, QBrush, QIntValidator
+from PyQt6.QtGui import QPen, QBrush, QIntValidator, QFont
 from PyQt6.QtCore import Qt
 
 from centralizedGraph import CentralizedGraph
@@ -12,26 +12,43 @@ from decentralizedGraph import DecentralizedGraph
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setGeometry(400, 100, 1200, 800)
+
+        self.resize(800, 600)
+
+        qtRectangle = self.frameGeometry()
+        centerPoint = self.screen().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
         self.setWindowTitle("Routing Algorithm Simulator")
         self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
+
+        label = QLabel("Routing Algorithm", self)
+        label2 = QLabel("Simulator", self)
+        label.move(320, 100)
+        label2.move(360, 130)
+        label.resize(500, 50)
+        label2.resize(500, 50)
 
         self.UIComponents()
 
         self.show()
 
     def UIComponents(self):
+        
         self.centralizedButton = QPushButton("Centralized Algorithm", self)
+
         self.centralizedButton.setGeometry(50, 50, 150, 40)
-        self.centralizedButton.move(300, 250)
+        self.centralizedButton.move(200, 250)
         self.centralizedButton.pressed.connect(
             lambda: self.algorithmWindow("centralized"))
 
         self.decentralizedButton = QPushButton("Decentralized Algorithm", self)
         self.decentralizedButton.setGeometry(50, 50, 150, 40)
-        self.decentralizedButton.move(700, 250)
+        self.decentralizedButton.move(450, 250)
         self.decentralizedButton.pressed.connect(
             lambda: self.algorithmWindow("decentralized"))
+        
 
     def algorithmWindow(self, type):
         self.w = algorithmWindow(type)
@@ -42,7 +59,8 @@ class MainWindow(QMainWindow):
 class algorithmWindow(QWidget):
     def __init__(self, type):
         super().__init__()
-        self.setGeometry(400, 100, 1200, 800)
+        
+        self.resize(800, 600)
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(350, 0, 10, 10)
         self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
@@ -50,14 +68,18 @@ class algorithmWindow(QWidget):
         self.graph = None
         self.nodes = []
         self.nodePos = []
+        self.currentNode = 0
+        self.previousNode = 0
         self.lines = [[None for _ in range(8)] for _ in range(8)]
+        self.previousEdge = None
 
         self.label = QLabel("", self)
         self.layout.addWidget(self.label)
 
-        self.errorLabel = QLabel("Choose from 3 to 8 Nodes", self)
+        self.errorLabel = QLabel("CHOOSE BETWEEN 3-8 NODES", self)
         self.errorLabel.setGeometry(0, 0, 200, 30)
         self.errorLabel.move(10, 70)
+        self.errorLabel.adjustSize()
 
         self.weightTable = QTableWidget(self)
         self.weightTable.hide()
@@ -104,11 +126,10 @@ class algorithmWindow(QWidget):
         generateGraphButton.pressed.connect(
             lambda: self.generateGraph(inputBox.text()))
 
-        self.nextIterationButton = QPushButton("Next Iteration", self)
-        self.nextIterationButton.setEnabled(False)
-        self.nextIterationButton.setGeometry(50, 50, 150, 40)
-        self.nextIterationButton.move(5, 150)
-        self.nextIterationButton.pressed.connect(self.nextIteration)
+        nexIterationButton = QPushButton("Next Iteration", self)
+        nexIterationButton.setGeometry(50, 50, 150, 40)
+        nexIterationButton.move(5, 150)
+        nexIterationButton.pressed.connect(self.nextIteration)
 
         self.setLayout(self.layout)
 
@@ -117,11 +138,9 @@ class algorithmWindow(QWidget):
         self.nodes = []
         self.nodePos = []
         self.currentNode = 0
+        self.previousNode = 0
         self.lines = [[None for _ in range(8)] for _ in range(8)]
         self.previousEdge = None
-        self.nextIterationButton.setText("Next Iteration")
-        self.nextIterationButton.setEnabled(True)
-        self.nextIterationButton.setStyleSheet("color: black")
 
     def generateGraph(self, numNodes):
         if (numNodes != "" and int(numNodes) >= 3):
@@ -230,32 +249,28 @@ class algorithmWindow(QWidget):
         for i in range(self.graph.nodes):
             self.weightTable.setItem(0, i, QTableWidgetItem("inf"))
 
-        self.weightTable.setItem(0, self.currentNode, QTableWidgetItem("0"))
-
         self.layout.addWidget(self.weightTable)
         self.weightTable.show()
 
-    def nextIteration(self):
-        self.nodes[self.graph.currentNode].setPen(
-            QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
-        if self.lines[self.graph.currentNode][self.graph.nextNode] != None:
-            self.lines[self.graph.currentNode][self.graph.nextNode].setPen(
-                QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
-
-        if self.graph.finished:
-            self.nextIterationButton.setEnabled(False)
-            self.nextIterationButton.setText("Finished")
-            self.nextIterationButton.setStyleSheet("color: green")
-
-        self.graph.minPathFindIterative()
-        self.weightTable.setItem(0, self.graph.nextNode, QTableWidgetItem(
-            str(self.graph.getCost(self.graph.nextNode))))
-
-        self.nodes[self.graph.currentNode].setPen(
+    def setNodesAndEdgeColour(self):
+        self.nodes[self.previousNode].setPen(
+            QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
+        self.nodes[self.currentNode].setPen(
             QPen(Qt.GlobalColor.green, 4, Qt.PenStyle.SolidLine))
-        if self.lines[self.graph.currentNode][self.graph.nextNode] != None:
-            self.lines[self.graph.currentNode][self.graph.nextNode].setPen(
-                QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
+        self.lines[self.previousNode][self.currentNode].setPen(
+            QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
+
+    def nextIteration(self):
+        pass
+        # self.nodes[self.previousNode].setPen(
+        #     QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
+        # self.previousEdge = self.lines[self.previousNode][self.currentNode]
+        # if (self.previousEdge != None):
+        #     self.previousEdge.setPen(
+        #         QPen(Qt.GlobalColor.black, 4, Qt.PenStyle.SolidLine))
+        # self.previousNode = self.currentNode
+        # self.currentNode = self.previousNode + 1
+        # self.setNodesAndEdgeColour()
 
     def homeWindow(self):
         w.show()
@@ -264,4 +279,33 @@ class algorithmWindow(QWidget):
 
 app = QApplication(sys.argv)
 w = MainWindow()
+
+app.setStyleSheet("""
+
+    QMainWindow {
+        background-color: #BDCFB5;
+    }
+
+    QPushButton {
+        font-size: 12px;
+        font-family: "Verdana";
+        border-radius: 4px;
+        border: 1px solid darkcyan;
+        background-color: "darkcyan";
+        color: "white";
+    }
+
+    QPushButton:hover {
+        background-color: "white";
+        color: "darkcyan";
+    }
+
+    QLabel {
+        font: 20px;
+        font-family: "Times New Roman";
+        font-weight: bold;
+        color: "darkcyan";
+    }
+""")
+
 app.exec()
