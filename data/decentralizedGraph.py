@@ -1,113 +1,106 @@
+from collections import defaultdict
+
+
 class DecentralizedGraph:
     def __init__(self, nodes):
-        """
-        Initializes a new instance of the DecentralizedGraph class.
-
-        :param nodes: A list of node names.
-        """
         self.nodes = nodes
-        self.graph = {node: {} for node in nodes}
+        self.graph = []
+        self.edges = defaultdict(list)
+        self.cost = [9999999] * nodes
+        self.cost[0] = 0
+        self.currentNode = 0
+        self.nextNode = 0
+        self.iterations = 0
+        self.finished = False
 
-    def add_edge(self, u, v, w):
-        """
-        Adds an edge between two nodes with a specified weight.
+    # Adds edges to the graph
+    def addEdge(self, u, v, weight):
+        self.graph.append([u, v, weight])
+        self.edges[u].append([v, weight])
+        self.edges[v].append([u, weight])
 
-        :param u: The name of the first node.
-        :param v: The name of the second node.
-        :param w: The weight of the edge.
-        """
-        self.graph[u][v] = w
-        self.graph[v][u] = w
+    def getEdge(self, source, destination):
+        for edge in self.edges[source]:
+            if edge[0] == destination:
+                return edge[1]
 
-    def distance_vector(self, src):
-        """
-        Calculates the least-cost paths from a specific source node to all other nodes using the distance-vector algorithm.
+    def getCost(self, node):
+        return self.cost[node]
 
-        :param src: The name of the source node.
+    def minPathFindIterative(self):
 
-        :return: A dictionary containing the next node on the least-cost path from src to all other nodes.
-                The keys are destination nodes and values are names of next nodes on least-cost path from src to destination.
+        if (self.nextNode == self.nodes - 1):
+            self.iterations = self.iterations + 1
 
-                For example:
+        # Relaxes all edges |V| - 1 times
+        for j in range(self.iterations, self.nodes, 1):
+            for u, v, weight in self.graph:
+                if self.cost[u] != 9999999 and self.cost[u] + weight < self.cost[v]:
+                    self.cost[v] = self.cost[u] + weight
+                    self.nextNode = v
+                    self.currentNode = u
+                    return
+                else:
+                    self.nextNode = j
 
-                {
-                    'A': None,
-                    'B': 'A',
-                    'C': 'B'
-                }
+        if self.iterations == self.nodes - 1:
+            self.finished = True
 
-                This indicates that:
+    def bellmanFord(self, src):
+        # Initializes costance from src to all other vertices
+        # All vertices start at infinity, while source is 0
+        cost = [9999999] * self.nodes
+        cost[src] = 0
 
-                - From src to itself there is no next node (None).
-                - From src to B there is a direct link (next_node['B'] == 'A').
-                - From src to C there is a link through B (next_node['C'] == 'B').
+        # Relaxes all edges |V| - 1 times
+        for _ in range(self.nodes - 1):
+            for u, v, weight in self.graph:
+                if cost[u] != 9999999 and cost[u] + weight < cost[v]:
+                    print(f"Relaxing edge ({u}, {v})")
+                    cost[v] = cost[u] + weight
 
-                And so on for all other destination nodes.
-        """
+        # Checks for negative-weight cycles
+        for u, v, weight in self.graph:
+            if cost[u] != 9999999 and cost[u] + weight < cost[v]:
+                print("Graph contains negative weight cycle")
+                return
 
-        # Initialize dictionaries to store distances and next nodes
-        dist = {n: float("inf") for n in self.nodes}
-        next_node = {n: None for n in self.nodes}
-
-        # Calculate least-cost paths using Bellman-Ford equation
-        dist[src] = 0
-        for i in range(len(self.nodes) - 1):
-            for u in self.graph:
-                for v in self.graph[u]:
-                    if dist[v] > dist[u] + self.graph[u][v]:
-                        dist[v] = dist[u] + self.graph[u][v]
-                        next_node[v] = u
-
-        return next_node
+        # Prints the distances
+        for i in range(self.nodes):
+            print(f"Vertex {i}: distance from source = {cost[i]}")
 
     def printEdges(self):
-        """
-        Prints all edges and their weights.
-        """
-        # Iterate over all edges sorted by their source and destination nodes
-        for u in sorted(self.graph.keys()):
-            print("{}: ".format(u), end="")
-            edges = []
-            # Append formatted string with edge information to list
-            for v in sorted(self.graph[u].keys()):
-                edges.append("{}({})".format(v, self.graph[u][v]))
-            print(", ".join(edges))
+        for edge in self.graph:
+            print(edge)
+        print()
 
-    def printCostFromNode(self, src):
-        """
-        Prints costs from specific source node to every destination.
+    def printGraph(self):
+        # Prints the distances
+        for i in range(self.nodes):
+            print(f"Vertex {i}: distance from source = {self.cost[i]}")
 
-        Output format:
 
-            Costs from A:
-            A: 0, B: 1, C: 3
+# if __name__ == "__main__":
+#     graph = DecentralizedGraph(5)
 
-        This indicates that cost from source (A) to itself is 0,
-        cost from source (A) to B is 1,
-        cost from source (A) to C is 3,
-        etc.
+#     graph.addEdge(0, 1, 10)
+#     graph.addEdge(0, 2, 5)
+#     graph.addEdge(1, 3, 1)
+#     graph.addEdge(1, 2, 2)
+#     graph.addEdge(2, 1, 3)
+#     graph.addEdge(2, 3, 9)
+#     graph.addEdge(2, 4, 2)
+#     graph.addEdge(3, 4, 4)
+#     graph.addEdge(4, 3, 6)
+#     graph.addEdge(4, 0, 7)
+#     graph.printEdges()
 
-        :param src: The name of the source node.
-        """
+#     graph.minPathFindIterative()
+#     graph.minPathFindIterative()
+#     graph.minPathFindIterative()
+#     graph.minPathFindIterative()
+#     graph.minPathFindIterative()
+#     graph.minPathFindIterative()
+#     graph.printGraph()
 
-        # Calculate least-cost paths using distance-vector algorithm
-        next_node = self.distance_vector(src)
-
-        # Print costs header
-        print("Costs from {}:".format(src))
-
-        costs = []
-
-        # Iterate over all destinations sorted by their names
-        for dest in sorted(next_node.keys()):
-            # Calculate cost by summing up weights along path from src to dest
-            cost = 0
-            current_node = dest
-            while current_node != src:
-                prev_node = next_node[current_node]
-                cost += self.graph[current_node][prev_node]
-                current_node = prev_node
-
-            costs.append("{}:{} ".format(dest, cost))
-
-        print(", ".join(costs))
+#     # graph.bellmanFord(0)
