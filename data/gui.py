@@ -210,14 +210,14 @@ class algorithmWindow(QWidget):
             node1 = random.randint(0, self.graph.nodes-1)
             node2 = random.randint(0, self.graph.nodes-1)
 
-            if node1 != node2 and self.graph.getEdge(node1, node2) == 0:
+            if node1 != node2 and (self.graph.getEdge(node1, node2) == 0 or self.graph.getEdge(node1, node2) == None):
                 weight = random.randint(1, 10)
                 self.graph.addEdge(node1, node2, weight)
                 numEdges += 1
 
         for i in range(self.graph.nodes):
             for j in range(self.graph.nodes):
-                if self.graph.getEdge(i, j) != 0:
+                if self.graph.getEdge(i, j) != 0 and self.graph.getEdge(i, j) != None:
                     self.drawEdge(i, j, self.graph.getEdge(i, j))
 
     def drawTable(self):
