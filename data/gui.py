@@ -12,29 +12,46 @@ from decentralizedGraph import DecentralizedGraph
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setGeometry(400, 100, 1200, 800)
+
+        self.resize(800, 600)
+
+        qtRectangle = self.frameGeometry()
+        centerPoint = self.screen().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
         self.setWindowTitle("Routing Algorithm Simulator")
         self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
+
+        label = QLabel("Routing Algorithm", self)
+        label2 = QLabel("Simulator", self)
+        label.move(320, 100)
+        label2.move(360, 130)
+        label.resize(500, 50)
+        label2.resize(500, 50)
 
         self.UIComponents()
 
         self.show()
 
     def UIComponents(self):
+        
         self.centralizedButton = QPushButton("Centralized Algorithm", self)
+
         self.centralizedButton.setGeometry(50, 50, 150, 40)
-        self.centralizedButton.move(300, 250)
+        self.centralizedButton.move(200, 250)
         self.centralizedButton.pressed.connect(
             lambda: self.algorithmWindow("centralized"))
 
         self.decentralizedButton = QPushButton("Decentralized Algorithm", self)
         self.decentralizedButton.setGeometry(50, 50, 150, 40)
-        self.decentralizedButton.move(700, 250)
+        self.decentralizedButton.move(450, 250)
         self.decentralizedButton.pressed.connect(
-            lambda: self.algorithmWindow("decentralized"))
+        lambda: self.algorithmWindow("decentralized"))
 
     def algorithmWindow(self, type):
         self.w = algorithmWindow(type)
+
         self.w.show()
         self.hide()
 
@@ -42,7 +59,8 @@ class MainWindow(QMainWindow):
 class algorithmWindow(QWidget):
     def __init__(self, type):
         super().__init__()
-        self.setGeometry(400, 100, 1200, 800)
+
+        self.resize(800, 600)
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(350, 0, 10, 10)
         self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, False)
@@ -55,9 +73,10 @@ class algorithmWindow(QWidget):
         self.label = QLabel("", self)
         self.layout.addWidget(self.label)
 
-        self.errorLabel = QLabel("Choose from 3 to 8 Nodes", self)
+        self.errorLabel = QLabel("CHOOSE BETWEEN 3-8 NODES", self)
         self.errorLabel.setGeometry(0, 0, 200, 30)
         self.errorLabel.move(10, 70)
+        self.errorLabel.adjustSize()
 
         self.weightTable = QTableWidget(self)
         self.weightTable.hide()
@@ -136,7 +155,8 @@ class algorithmWindow(QWidget):
             self.errorLabel.setText("Choose from 3 to 8 Nodes")
             self.errorLabel.setStyleSheet("color: black")
         else:
-            self.errorLabel.setText("Please enter a valid number of nodes")
+            self.errorLabel.setText("Enter a Valid Number of Nodes")
+            self.errorLabel.adjustSize()
             self.errorLabel.setStyleSheet("color: red")
 
     def drawNode(self, node, x, y):
@@ -210,14 +230,14 @@ class algorithmWindow(QWidget):
             node1 = random.randint(0, self.graph.nodes-1)
             node2 = random.randint(0, self.graph.nodes-1)
 
-            if node1 != node2 and self.graph.getEdge(node1, node2) == 0:
+            if node1 != node2 and (self.graph.getEdge(node1, node2) == 0 or self.graph.getEdge(node1, node2) == None):
                 weight = random.randint(1, 10)
                 self.graph.addEdge(node1, node2, weight)
                 numEdges += 1
 
         for i in range(self.graph.nodes):
             for j in range(self.graph.nodes):
-                if self.graph.getEdge(i, j) != 0:
+                if self.graph.getEdge(i, j) != 0 and self.graph.getEdge(i, j) != None:
                     self.drawEdge(i, j, self.graph.getEdge(i, j))
 
     def drawTable(self):
@@ -257,6 +277,7 @@ class algorithmWindow(QWidget):
             self.lines[self.graph.currentNode][self.graph.nextNode].setPen(
                 QPen(Qt.GlobalColor.red, 4, Qt.PenStyle.SolidLine))
 
+
     def homeWindow(self):
         w.show()
         self.close()
@@ -264,4 +285,29 @@ class algorithmWindow(QWidget):
 
 app = QApplication(sys.argv)
 w = MainWindow()
+
+app.setStyleSheet("""
+        QMainWindow {
+            background-color: #BDCFB5;
+        }
+        QPushButton {
+            font-size: 12px;
+            font-family: "Verdana";
+            border-radius: 4px;
+            border: 1px solid darkcyan;
+            background-color: "darkcyan";
+            color: "white";
+        }
+        QPushButton:hover {
+            background-color: "white";
+            color: "darkcyan";
+        }
+        QLabel {
+            font: 20px;
+            font-family: "Times New Roman";
+            font-weight: bold;
+            color: "darkcyan";
+        }
+    """)
+
 app.exec()
