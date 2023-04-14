@@ -1,9 +1,7 @@
 class CentralizedGraph:
     """
     Represents a graph with centralized control.
-
     :param int nodes: Number of nodes in the graph.
-
     :ivar int nodes: Number of nodes in the graph.
     :ivar list edges: List of edges in the graph.
     :ivar list cost: List of costs of each node from source.
@@ -13,7 +11,6 @@ class CentralizedGraph:
     def __init__(self, nodes):
         """
         Initializes a new instance of the CentralizedGraph class.
-
         :param int nodes: Number of nodes in the graph.
         """
 
@@ -41,7 +38,6 @@ class CentralizedGraph:
     def getNumberOfNodes(self):
         """
         Returns the number of nodes in the graph.
-
         :return: Number of nodes in the graph.
         :rtype: int
         """
@@ -51,7 +47,6 @@ class CentralizedGraph:
     def addEdge(self, source, destination, cost):
         """
         Adds an edge to the graph.
-
         :param int source: Source node of the edge.
         :param int destination: Destination node of the edge.
         :param int cost: Cost of the edge.
@@ -63,7 +58,6 @@ class CentralizedGraph:
     def getEdge(self, source, destination):
         """
         Returns the cost of the edge between the source and destination nodes.
-
         :param int source: Source node of the edge.
         :param int destination: Destination node of the edge.
         :return: Cost of the edge.
@@ -75,7 +69,6 @@ class CentralizedGraph:
     def getCost(self, node):
         """
         Returns the cost of the node.
-
         :param int node: Node to get the cost from.
         :return: Cost of the node.
         :rtype: int
@@ -86,7 +79,6 @@ class CentralizedGraph:
     def getVisited(self, node):
         """
         Returns whether the node has been visited or not.
-
         :param int node: Node to check if it has been visited.
         :return: True if the node has been visited, False otherwise.
         :rtype: bool
@@ -97,7 +89,6 @@ class CentralizedGraph:
     def nextMinCostNode(self):
         """
         Returns the index of the next node with the minimum cost.
-
         :return: Index of the next node with the minimum cost.
         :rtype: int
         """
@@ -175,12 +166,10 @@ class CentralizedGraph:
     def printCost(self):
         """
         Prints the cost of each node from source.
-
         Output format:
             0  --- Cost: 0
             1  --- Cost: 2
             2  --- Cost: 1
-
         This indicates that cost from source (0) to itself is 0,
         cost from source (0) to 1 is 2,
         cost from source (0) to 2 is 1,
