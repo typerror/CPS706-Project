@@ -214,41 +214,42 @@ class algorithmWindow(QWidget):
             self.scene.addItem(drawLine)
 
     def drawEdges(self):
-        # maxEdges = self.graph.nodes * (self.graph.nodes - 1) / 3
-        # numEdges = 0
+        if self.algorithm == "centralized":
+            maxEdges = self.graph.nodes * (self.graph.nodes - 1) / 3
+            numEdges = 0
 
-        # lowerBound = 1
-        # if (self.algorithm == "decentralized"):
-        #     lowerBound = 1
+            lowerBound = 1
+            if (self.algorithm == "decentralized"):
+                lowerBound = 1
 
-        # for node in range(self.graph.nodes):
-        #     randNode = random.randint(0, self.graph.nodes-1)
-        #     while randNode == node:
-        #         randNode = random.randint(0, self.graph.nodes-1)
+            for node in range(self.graph.nodes):
+                randNode = random.randint(0, self.graph.nodes-1)
+                while randNode == node:
+                    randNode = random.randint(0, self.graph.nodes-1)
 
-        #     weight = random.randint(lowerBound, 10)
-        #     self.graph.addEdge(node, randNode, weight)
-        #     numEdges += 1
+                weight = random.randint(lowerBound, 10)
+                self.graph.addEdge(node, randNode, weight)
+                numEdges += 1
 
-        # while numEdges < maxEdges:
-        #     node1 = random.randint(0, self.graph.nodes-1)
-        #     node2 = random.randint(0, self.graph.nodes-1)
+            while numEdges < maxEdges:
+                node1 = random.randint(0, self.graph.nodes-1)
+                node2 = random.randint(0, self.graph.nodes-1)
 
-        #     if node1 != node2 and (self.graph.getEdge(node1, node2) == 0 or self.graph.getEdge(node1, node2) == None):
-        #         weight = random.randint(1, 10)
-        #         self.graph.addEdge(node1, node2, weight)
-        #         numEdges += 1
-
-        self.graph.addEdge(0, 1, 10)
-        self.graph.addEdge(0, 2, 5)
-        self.graph.addEdge(1, 3, 1)
-        self.graph.addEdge(1, 2, 2)
-        self.graph.addEdge(2, 1, 3)
-        self.graph.addEdge(2, 3, 9)
-        self.graph.addEdge(2, 4, 2)
-        self.graph.addEdge(3, 4, 4)
-        self.graph.addEdge(4, 3, 6)
-        self.graph.addEdge(4, 0, 7)
+                if node1 != node2 and (self.graph.getEdge(node1, node2) == 0 or self.graph.getEdge(node1, node2) == None):
+                    weight = random.randint(1, 10)
+                    self.graph.addEdge(node1, node2, weight)
+                    numEdges += 1
+        else:
+            self.graph.addEdge(0, 1, 10)
+            self.graph.addEdge(0, 2, 5)
+            self.graph.addEdge(1, 3, 1)
+            self.graph.addEdge(1, 2, 2)
+            self.graph.addEdge(2, 1, 3)
+            self.graph.addEdge(2, 3, 9)
+            self.graph.addEdge(2, 4, 2)
+            self.graph.addEdge(3, 4, 4)
+            self.graph.addEdge(4, 3, 6)
+            self.graph.addEdge(4, 0, 7)
 
         for i in range(self.graph.nodes):
             for j in range(self.graph.nodes):
